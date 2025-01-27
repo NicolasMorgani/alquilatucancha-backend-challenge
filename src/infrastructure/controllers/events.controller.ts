@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { UseZodGuard } from 'nestjs-zod';
 import { z } from 'nestjs-zod/z';
+
 
 import { ClubUpdatedEvent } from '../../domain/events/club-updated.event';
 import { CourtUpdatedEvent } from '../../domain/events/court-updated.event';
@@ -43,11 +44,16 @@ export type ExternalEventDTO = z.infer<typeof ExternalEventSchema>;
 
 @Controller('events')
 export class EventsController {
-  constructor(private eventBus: EventBus) {}
+  constructor(
+    private eventBus: EventBus,
+
+  ) { }
 
   @Post()
   @UseZodGuard('body', ExternalEventSchema)
   async receiveEvent(@Body() externalEvent: ExternalEventDTO) {
+
+
     switch (externalEvent.type) {
       case 'booking_created':
         this.eventBus.publish(
@@ -82,5 +88,6 @@ export class EventsController {
         );
         break;
     }
+
   }
 }
