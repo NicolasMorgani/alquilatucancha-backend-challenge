@@ -17,16 +17,16 @@ export class HTTPAlquilaTuCanchaClient implements AlquilaTuCanchaClient {
   constructor(
     private httpService: HttpService,
     config: ConfigService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache, // Inject the cache manager
   ) {
     this.base_url = config.get<string>('ATC_BASE_URL', 'http://localhost:4000');
   }
 
   async getClubs(placeId: string): Promise<Club[]> {
-    const cacheKey = `clubs_${placeId}`;
-    const cachedResponse = await this.cacheManager.get<Club[]>(cacheKey);
+    const cacheKey = `clubs_${placeId}`;// Define the cache key
+    const cachedResponse = await this.cacheManager.get<Club[]>(cacheKey);// Check if the response is cached
 
-    if (cachedResponse) {
+    if (cachedResponse) {// If the response is cached, return it
       return cachedResponse;
     }
 
@@ -37,7 +37,7 @@ export class HTTPAlquilaTuCanchaClient implements AlquilaTuCanchaClient {
       })
       .then((res) => res.data);
 
-    await this.cacheManager.set(cacheKey, response, 300); // Cache for 5 minutes
+    await this.cacheManager.set(cacheKey, response, 60); // cache for 1 minute
     return response;
   }
 
